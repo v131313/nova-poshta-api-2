@@ -1,13 +1,13 @@
 {
-    "name": "lis-dev/nova-poshta-api-2",
+    "name": "v131313/nova-poshta-api-2",
     "description": "PHP class for API 2.0 ukrainian delivery company \"Nova Poshta\"",
     "keywords": ["delivery", "delivery service", "nova poshta", "nova poshta api"],
-    "homepage": "https://github.com/lis-dev/",
+    "homepage": "https://github.com/v131313/",
     "license": "MIT",
     "authors": [
         {
-            "name": "Igor Ivashchenko",
-            "homepage": "https://github.com/lis-dev/nova-poshta-api-2",
+            "name": "v131313",
+            "homepage": "https://github.com/v131313/nova-poshta-api-2",
             "role": "Developer"
         },
         {
@@ -24,7 +24,7 @@
     },
     "autoload": {
         "psr-4": {
-            "LisDev\\": "src/"
+            "v131313\\": "src/"
         }
     }
 }

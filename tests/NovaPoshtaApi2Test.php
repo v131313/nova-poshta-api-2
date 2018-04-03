@@ -1,6 +1,6 @@
 <?php
-namespace LisDev\Tests;
-use LisDev\Delivery\NovaPoshtaApi2;
+namespace v131313\Tests;
+use v131313\Delivery\NovaPoshtaApi2;
 /**
  * phpUnit test class
  * 
