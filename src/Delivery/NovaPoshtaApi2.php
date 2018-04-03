@@ -324,6 +324,12 @@ class NovaPoshtaApi2 {
 	 * @param int $page
 	 * @return mixed
 	 */
+	function getWarehousesAll() {
+	    $a= new \stdClass(); // empty object for new post
+        return $this->request('AddressGeneral', 'getWarehouses',$a );
+    }
+
+	 
 	function getWarehouses($cityRef, $page = 0) {
 		return $this->request('Address', 'getWarehouses', array(
 			'CityRef' => $cityRef,
