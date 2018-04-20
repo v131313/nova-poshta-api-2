@@ -875,7 +875,45 @@ class NovaPoshtaApi2 {
 		// Creating new Internet Document
 		return $this->model('InternetDocument')->save($paramsInternetDocument);
 	}
+	
+	function newInternetDocument2($sender, $recipient, $params) {
+		// Check for required params and set defaults
+		$this->checkInternetDocumentParams($params);
+		if ( ! $sender['CitySender']) {
+			$senderCity = $this->getCity($sender['City'], $sender['Region']);
+			$sender['CitySender'] = $senderCity['data'][0]['Ref'];
+		}
+		$sender['CityRef'] = $sender['CitySender'];
+		if ( ! $sender['SenderAddress'] AND $sender['CitySender'] AND $sender['Warehouse']) {
+			$senderWarehouse = $this->getWarehouse($sender['CitySender'], $sender['Warehouse']);
+			$sender['SenderAddress'] = $senderWarehouse['data'][0]['Ref'];
+		}
+ 
+		if ( ! $sender['Sender']) {
+			$sender['CounterpartyProperty'] = 'Sender';
+			// Set full name to Description if is not set
+			if ( ! $sender['Description']) {
+			    $sender['Description'] = $sender['LastName'].' '.$sender['FirstName'].' '.$sender['MiddleName'];
+			}
+			// Check for existing sender
+			$senderCounterpartyExisting = $this->getCounterparties('Sender', 1, $sender['Description'], $sender['CityRef']);
+			// Copy user to the selected city if user doesn't exists there
+			if ($senderCounterpartyExisting['data'][0]['Ref']) {
+    			// Counterparty exists
+    			$sender['Sender'] = $senderCounterpartyExisting['data'][0]['Ref'];
+    			$contactSender = $this->getCounterpartyContactPersons($sender['Sender']);
+    			$sender['ContactSender'] = $contactSender['data'][0]['Ref'];
+    			$sender['SendersPhone'] = $sender['Phone'] ? $sender['Phone'] : $contactSender['data'][0]['Phones'];
+			}
+		}
 
+		// Full params is merge of arrays $sender, $recipient, $params
+		$paramsInternetDocument = array_merge($sender, $recipient, $params);
+		// Creating new Internet Document
+		return $this->model('InternetDocument')->save($paramsInternetDocument);
+	}
+
+	
 	/**
 	 * Get only link on internet document for printing
 	 * 
