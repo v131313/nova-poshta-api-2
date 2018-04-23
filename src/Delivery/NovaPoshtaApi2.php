@@ -835,6 +835,20 @@ class NovaPoshtaApi2 {
 			$senderWarehouse = $this->getWarehouse($sender['CitySender'], $sender['Warehouse']);
 			$sender['SenderAddress'] = $senderWarehouse['data'][0]['Ref'];
 		}
+                
+                if ( is_array($sender['SenderAddress']) ){
+ 			$sender['SenderAddress']['CounterpartyRef'] = $sender['Sender'];
+ 			$Address = $this->model('Address')->save($sender['SenderAddress']);
+             		if ( $Address['success'] ) {
+                 		//для создания ттн нужен идентификатор адреса
+                 		$sender['SenderAddress'] = $Address['data'][0]['Ref'];
+             		}
+             		elseif ($Address['errors']) {
+                 		$error = 'Новая почта сообщает об ошибке: '.(is_array($Address['errors']) ? implode("<br>", $Address['errors']) : $Address['errors']);
+                 		throw new CHttpException(400, $error);
+             		}
+ 		}	
+ 
 		if ( ! $sender['Sender']) {
 			$sender['CounterpartyProperty'] = 'Sender';
 			// Set full name to Description if is not set
@@ -862,8 +876,9 @@ class NovaPoshtaApi2 {
 		}
 		$recipient['CityRef'] = $recipient['CityRecipient'];
 		if ( ! $recipient['RecipientAddress']) {
-			$recipientWarehouse = $this->getWarehouse($recipient['CityRecipient'], $recipient['Warehouse']);
-			$recipient['RecipientAddress'] = $recipientWarehouse['data'][0]['Ref'];
+			//$recipientWarehouse = $this->getWarehouse($recipient['CityRecipient'], $recipient['Warehouse']);
+                        //$recipient['RecipientAddress'] = $recipientWarehouse['data'][0]['Ref'];
+                        $recipient['RecipientAddress'] = $recipient['Warehouse'];
 		}
 		if ( ! $recipient['Recipient']) {
 			$recipientCounterparty = $this->model('Counterparty')->save($recipient);
@@ -875,6 +890,7 @@ class NovaPoshtaApi2 {
 		// Creating new Internet Document
 		return $this->model('InternetDocument')->save($paramsInternetDocument);
 	}
+
 	
 	function newInternetDocument2($sender, $recipient, $params) {
 		// Check for required params and set defaults
